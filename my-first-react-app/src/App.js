@@ -1,55 +1,33 @@
-// App.js
 import React from 'react';
+import { Link, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
-import CurrentTime from './CurrentTime';
-import data from './data';
-import EventCard from './EventCard';
-import Greeting from './Greeting';
+import Home from './pages/Home';
+import Seminar1 from './pages/Seminar1';
+import Seminar2 from './pages/Seminar2';
 
-function App() {
-  const events = [
-    {
-      title: "Rock band concert",
-      date: "November 25, 2023",
-      location: "Sports Palace"
-    },
-    {
-      title: "Contemporary art exhibition",
-      date: "November 30, 2023",
-      location: "Art Gallery"
-    },
-    {
-      title: "Street food festival",
-      date: "December 5, 2023",
-      location: "Central Park"
-    }
-  ];
+const App = () => {
   return (
-    <div className="App">
-      <Greeting />   <CurrentTime />
-      <h1>Upcoming events</h1>
-      {events.map((event, index) => (
-        <EventCard
-          key={index}
-          title={event.title}
-          date={event.date}
-          location={event.location}
-        />
-      ))}
-      <h1>Products List</h1>
-      <ul>
-        {data.map(product => (
-          <li key={product.id} className="product-item">
-            <img src={product.image} alt={product.title} />
-            <h2>{product.title}</h2>
-            <p>{product.description}</p>
-            <p>Price: ${product.price.toFixed(2)}</p>
-            <button className="add-to-cart">Add to Cart</button>
+    <Router>
+      <nav className="navbar">
+        <ul className="nav-list">
+          <li className="nav-item">
+            <Link className="nav-link" to="/">Home</Link>
           </li>
-        ))}
-      </ul>
-    </div>
+          <li className="nav-item">
+            <Link className="nav-link" to="/Seminar1">Seminar1</Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link" to="/Seminar2">Seminar2</Link>
+          </li>
+        </ul>
+      </nav>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/Seminar1" element={<Seminar1 />} />
+        <Route path="/Seminar2" element={<Seminar2 />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

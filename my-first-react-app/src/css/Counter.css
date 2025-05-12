@@ -1,0 +1,29 @@
+.counter-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.counter-title {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.increment-button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+.increment-button:hover {
+    background-color: #218838;
+}
