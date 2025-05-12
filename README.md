@@ -1,4 +1,4 @@
-# React
+# Seminar 1
 
 ## Task 1
 
@@ -192,3 +192,215 @@ export default EventCard;
 ```
 
 ![EventCard](./img/Events.png)
+
+# Seminar 2
+
+For different workshops we will use different pages to test tasks. For this we will set up routing and use the react-router-dom library.
+
+```Terminal
+npm install react-router-dom
+```
+
+Let's create a new file for a new page. For example, let's create a page "Seminar2".
+
+To do this, create a new folder in the src folder, for example, pages, and inside the file "Seminar2.js".
+
+## Task 1
+
+- Create a Counter component that displays a button and a number.
+- The number increases by 1 each time the user clicks the button.
+
+Let's create a Counter.js file and the following code:
+
+```JavaScript
+import React, { useState } from 'react';
+import './Counter.css';
+
+const Counter = () => {
+    const [count, setCount] = useState(0);
+    const increment = () => {
+        setCount(count + 1);
+    };
+    return (
+        <div className="counter-container">
+            <h1 className="counter-title">Counter: {count}</h1>
+            <button className="increment-button" onClick={increment}>Increment</button>
+        </div>
+    );
+};
+
+export default Counter;
+```
+
+Now we can use the Counter component in your main application component, for example in Seminar2.js:
+
+```JavaScript
+import React from 'react';
+import Counter from './Counter';
+
+const Seminar2 = () => {
+  return (
+    <div>
+      <h1>Welcome to the counter app!</h1>
+      <Counter />
+    </div>
+  );
+};
+
+export default Seminar2;
+```
+
+## Task 2
+
+Create a TextInput component that contains a text input field and displays the entered text below it in real time.
+
+Let's create a TextInput.js file with a component:
+
+```JavaScript
+import React, { useState } from 'react';
+import './TextInput.css';
+
+const TextInput = () => {
+    const [text, setText] = useState('');
+
+    const handleChange = (event) => {
+        setText(event.target.value);
+    };
+
+    return (
+        <div className="text-input-container">
+            <input
+                type="text"
+                className="text-input"
+                value={text}
+                onChange={handleChange}
+                placeholder="Enter text here"
+            />
+            <p className="text-output">You entered: {text}</p>
+        </div>
+    );
+};
+
+export default TextInput;
+```
+
+Let's use it in the application:
+
+```JavaScript
+import React from 'react';
+import TextInput from './TextInput';
+
+const Seminar2 = () => {
+return (
+<div>
+<h1>Welcome to the text input app!</h1>
+<TextInput />
+</div>
+);
+};
+
+export default Seminar2;
+```
+
+## Task 3
+
+Create a TodoList component that allows adding items to a to-do list via a text input field. The list should be updated when a new to-do is added.
+
+Let's create a TodoList.js file with a component:
+
+```JavaScript
+import React, { useState } from 'react';
+import './TodoList.css';
+
+const TodoList = () => {
+    const [todos, setTodos] = useState([]);
+    const [inputValue, setInputValue] = useState('');
+
+    const addTodo = (event) => {
+        event.preventDefault();
+        if (inputValue.trim()) {
+            setTodos([...todos, inputValue]);
+            setInputValue('');
+        }
+    };
+
+    const removeTodo = (index) => {
+        setTodos(todos.filter((_, i) => i !== index));
+    };
+
+    return (
+        <div className="todo-container">
+            <h1>Todo List</h1>
+            <form className="todo-form" onSubmit={addTodo}>
+                <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Enter a new todo"
+                />
+                <button type="submit">Add</button>
+            </form>
+            <ul className="todo-list">
+                {todos.map((todo, index) => (
+                    <li key={index}>
+                        {todo}
+                        <button onClick={() => removeTodo(index)}>Remove</button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default TodoList;
+```
+
+Using TodoList in the main component of the application:
+
+```JavaScript
+import React from 'react';
+import TodoList from './TodoList';
+
+const Seminar2 = () => {
+return (
+<div>
+<h1>Welcome to the Todo List app!</h1>
+<TodoList />
+</div>
+);
+};
+
+export default Seminar2;
+```
+
+## Task 4
+
+Create a Timer component that displays a timer that increases by 1 every second. Use useEffect to set and clear the interval.
+
+```JavaScript
+import React, { useState, useEffect } from 'react';
+
+const Timer = () => {
+const [seconds, setSeconds] = useState(0);
+
+useEffect(() => {
+// Set an interval to increment the timer every second
+const interval = setInterval(() => {
+setSeconds(prevSeconds => prevSeconds + 1);
+}, 1000);
+
+// Clear the interval when the component unmounts
+return () => clearInterval(interval);
+}, []); // An empty array of dependencies so that the effect only fires once on mount
+
+return (
+<div>
+<h1>Timer: {seconds} seconds</h1>
+</div>
+);
+};
+
+export default Timer;
+```
+
+![Finish second seminar](./img/Finish_second_seminar.png)
