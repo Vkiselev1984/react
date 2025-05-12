@@ -1,0 +1,6 @@
+// data.js
+const dataJSON = '[{"id":1,"title":"Product 1","description":"Description for product 1","price":10.99,"image":"https://sun9-80.userapi.com/impf/vnsp2_zTA6PTCFK4xDcqPXCt4ayjwLHdfb_fKw/T_rreORvbXI.jpg?size=849x565&quality=96&sign=134cddbd698073431d3502fe53ff6e3e&c_uniq_tag=WTsGy0UNtPVO6XQjf5Nn9ibd96Onm9h6A9jlMoN2EFE&type=album"},{"id":2,"title":"Product 2","description":"Description for product 2","price":12.99,"image":"https://sun9-80.userapi.com/impf/vnsp2_zTA6PTCFK4xDcqPXCt4ayjwLHdfb_fKw/T_rreORvbXI.jpg?size=849x565&quality=96&sign=134cddbd698073431d3502fe53ff6e3e&c_uniq_tag=WTsGy0UNtPVO6XQjf5Nn9ibd96Onm9h6A9jlMoN2EFE&type=album"},{"id":3,"title":"Product 3","description":"Description for product 3","price":15.99,"image":"https://sun9-80.userapi.com/impf/vnsp2_zTA6PTCFK4xDcqPXCt4ayjwLHdfb_fKw/T_rreORvbXI.jpg?size=849x565&quality=96&sign=134cddbd698073431d3502fe53ff6e3e&c_uniq_tag=WTsGy0UNtPVO6XQjf5Nn9ibd96Onm9h6A9jlMoN2EFE&type=album"}]';
+
+const data = JSON.parse(dataJSON);
+
+export default data;
