@@ -1,4 +1,5 @@
 import React from 'react';
+import CommentsList from '../components/CommentsList';
 import Counter from '../components/Counter';
 import TextInput from '../components/TextInput';
 import Timer from '../components/Timer';
@@ -14,6 +15,8 @@ const Seminar2 = () => {
             <TodoList />
             <h1>Timer</h1>
             <Timer />
+            <h1>Homework</h1>
+            <CommentsList />
         </div>
     );
 };

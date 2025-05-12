@@ -404,3 +404,63 @@ export default Timer;
 ```
 
 ![Finish second seminar](./img/Finish_second_seminar.png)
+
+## Homework
+
+### Task: Comments list with deletion.
+
+#### Goal
+
+Combine useState, list rendering, and event handling to create an interactive interface.
+
+#### Task:
+
+Create a CommentsList component that displays a list of comments. Each comment should have a button to delete it. When the button is clicked, the comment should be deleted from the list.
+
+You can use a template:
+
+const [comments, setComments] = useState([
+{ id: 1, text: "This is the first comment" },
+{ id: 2, text: "This is the second comment" },
+{ id: 3, text: "This is the third comment" }
+]);
+
+#### Solution
+
+```JavaScript
+import React, { useState } from 'react';
+import '../css/CommentsList.css';
+
+const CommentsList = () => {
+const [comments, setComments] = useState([
+{ id: 1, text: "This is the first comment" },
+{ id: 2, text: "This is the second comment" },
+{ id: 3, text: "This is the third comment" }
+]);
+
+const handleDelete = (id) => {
+setComments(prevComments => prevComments.filter(comment => comment.id !== id));
+};
+
+return (
+<div>
+<h2>List of comments</h2>
+<ul className="comments-list">
+{comments.map(comment => (
+<li key={comment.id} className="comment-item">
+<span>{comment.text}</span>
+<button
+className="delete-button"
+onClick={() => handleDelete(comment.id)}
+>
+Delete
+</button>
+</li>
+))}
+</ul>
+</div>
+);
+};
+
+export default CommentsList;
+```
