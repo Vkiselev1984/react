@@ -1034,4 +1034,272 @@ export default App;
 
 ![List](./img/List.png)
 
-## Homework
+# Seminar 5
+
+## Task 1: Context
+
+Create UserContext and ThemeContext contexts with initial values ​​(e.g. username: "Guest", theme: "light").
+
+- Implement the App component:
+  - Wrap the child components in UserContext.Provider and ThemeContext.Provider.
+  - Add the ability to change the username and theme through the UI.
+- Create components that use these contexts:
+  - Header should display a greeting with the username.
+  - Profile can show more detailed information about the user or just use the theme for styling.
+  - Footer should use the theme for styling and, maybe, display a copyright with the current year.
+- Add the ability to change the theme and username in the UI, using the state in the App component and passing the functions to do the changing through the context.
+
+let's create two contexts: UserContext and ThemeContext:
+
+```JavaScript
+// UserContext.js
+import React, { createContext, useState } from 'react';
+
+export const UserContext = createContext();
+
+export const UserProvider = ({ children }) => {
+    const [user, setUser] = useState({ name: 'Guest' });
+
+    return (
+        <UserContext.Provider value={{ user, setUser }}>
+            {children}
+        </UserContext.Provider>
+    );
+};
+
+// ThemeContext.js
+import React, { createContext, useState } from 'react';
+
+export const ThemeContext = createContext();
+
+export const ThemeProvider = ({ children }) => {
+    const [theme, setTheme] = useState('light');
+
+    return (
+        <ThemeContext.Provider value={{ theme, setTheme }}>
+            {children}
+        </ThemeContext.Provider>
+    );
+};
+```
+
+Now let's create a component that will use the created contexts.
+
+```JavaScript
+import React, { useContext } from 'react';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
+import Profile from '../components/Profile';
+import { ThemeContext, ThemeProvider } from '../contexts/ThemeContext';
+import { UserContext, UserProvider } from '../contexts/UserContext';
+import '../css/style.css';
+
+const Seminar5 = () => {
+return (
+<UserProvider>
+<ThemeProvider>
+<Main />
+</ThemeProvider>
+</UserProvider>
+);
+};
+
+const Main = () => {
+const { user, setUser } = useContext(UserContext);
+const { theme, setTheme } = useContext(ThemeContext);
+
+const handleUserChange = (e) => {
+setUser({ name: e.target.value });
+};
+
+const handleThemeChange = (e) => {
+setTheme(e.target.value);
+};
+
+return (
+<div className={theme}>
+<Header />
+<Profile />
+<Footer />
+<div>
+<input
+type="text"
+value={user?.name || ''}
+onChange={handleUserChange}
+placeholder="Enter username"
+/>
+<select onChange={handleThemeChange} value={theme}>
+<option value="light">Light</option>
+<option value="dark">Dark</option>
+</select>
+</div>
+</div>
+);
+};
+
+export default Seminar5;
+```
+
+Now let's create Header, Profile and Footer components that will use contexts.
+
+```JavaScript
+// Header
+
+import React, { useContext } from 'react';
+import { UserContext } from '../contexts/UserContext';
+
+const Header = () => {
+const { user } = useContext(UserContext);
+
+return (
+<h1>Hello, {user?.name || 'Guest'}!</h1>
+);
+};
+
+export default Header;
+
+// Profile
+
+import React, { useContext } from 'react';
+import { ThemeContext } from '../contexts/ThemeContext';
+import { UserContext } from '../contexts/UserContext';
+
+const Profile = () => {
+const { user } = useContext(UserContext);
+const { theme } = useContext(ThemeContext);
+
+return (
+<div className={`profile ${theme}`}>
+<h2>User profile:</h2>
+<p>Name: {user?.name || 'Not specified'}</p>
+<p>Theme: {theme}</p>
+</div>
+);
+};
+
+export default Profile;
+
+// Footer
+import React, { useContext } from 'react';
+import { ThemeContext } from '../contexts/ThemeContext';
+
+const Footer = () => {
+const { theme } = useContext(ThemeContext);
+const currentYear = new Date().getFullYear();
+
+return (
+<footer className={theme}>
+<p>© {currentYear} My company</p>
+</footer>
+);
+};
+
+export default Footer;
+```
+
+## Task 2: HOC withLoadingIndicator
+
+You need to develop a HOC withLoadingIndicator that can be used to wrap any component. This HOC should take a parameter isLoading, which determines whether loading is currently in progress. If isLoading is true, then the loading indicator should be shown instead of the wrapped component.
+
+1. Create a HOC withLoadingIndicator that takes a component and returns a new component that shows either the loading indicator or the contents of the original component, depending on the isLoading prop.
+2. You can use a simple text indicator or any spinner from the available libraries.
+
+```Terminal
+npm install react-spinners
+```
+
+HOC withLoadingIndicator:
+
+```JavaScript
+import React from 'react';
+import { ClipLoader } from 'react-spinners';
+
+const withLoadingIndicator = (WrappedComponent) => {
+  return ({ isLoading, ...props }) => {
+    if (isLoading) {
+      return (
+        <div className="loading-indicator">
+          <ClipLoader size={50} color={"#123abc"} loading={isLoading} />
+        </div>
+      );
+    }
+
+    return <WrappedComponent {...props} />;
+  };
+};
+
+export default withLoadingIndicator;
+```
+
+Now let's use HOC:
+
+```JavaScript
+import React, { useContext, useEffect, useState } from 'react';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
+import Profile from '../components/Profile';
+import { ThemeContext, ThemeProvider } from '../contexts/ThemeContext';
+import { UserContext, UserProvider } from '../contexts/UserContext';
+import '../css/style.css';
+import withLoadingIndicator from '../hocs/withLoadingIndicator';
+
+const Seminar5 = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 5000);
+    };
+
+    loadData();
+  }, []);
+
+  return (
+    <UserProvider>
+      <ThemeProvider>
+        <MainWithLoading isLoading={isLoading} />
+      </ThemeProvider>
+    </UserProvider>
+  );
+};
+
+const Main = () => {
+  const { user, setUser } = useContext(UserContext);
+  const { theme, setTheme } = useContext(ThemeContext);
+
+  const handleUserChange = (e) => {
+    setUser({ name: e.target.value });
+  };
+
+  const handleThemeChange = (e) => {
+    setTheme(e.target.value);
+  };
+
+  return (
+    <div className={theme}>
+      <Header />
+      <Profile />
+      <Footer />
+      <div>
+        <input
+          type="text"
+          value={user?.name || ''}
+          onChange={handleUserChange}
+          placeholder="Enter username"
+        />
+        <select onChange={handleThemeChange} value={theme}>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+    </div>
+  );
+};
+
+
+const MainWithLoading = withLoadingIndicator(Main);
+
+export default Seminar5;
+```

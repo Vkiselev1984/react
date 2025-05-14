@@ -1,0 +1,19 @@
+.light {
+    background-color: white;
+    color: black;
+}
+
+.dark {
+    background-color: black;
+    color: white;
+}
+
+.profile {
+    padding: 20px;
+    border: 1px solid #ccc;
+}
+
+footer {
+    padding: 10px;
+    text-align: center;
+}
