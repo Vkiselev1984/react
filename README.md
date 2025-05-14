@@ -464,3 +464,479 @@ Delete
 
 export default CommentsList;
 ```
+
+# Seminar 3
+
+## Task 1
+
+- Create a Greeting functional component that takes a name prop and displays the message Hello, {name}!.
+- Use the Greeting component in your main App component, passing different names as props.
+
+```JavaScript
+import React from 'react';
+import '../css/PropsGreeting.css';
+
+const PropsGreeting = ({ name }) => {
+    return <h1>Привет, {name}!</h1>;
+};
+
+export default PropsGreeting;
+```
+
+```JavaScript
+import React from 'react';
+import PropsGreeting from '../components/PropsGreeting';
+const Seminar3 = () => {
+    return (
+        <div>
+            <h1>Props greeting</h1>
+            <div>
+                <PropsGreeting name="Alexey" />
+                <PropsGreeting name="Maria" />
+                <PropsGreeting name="Dmitry" />
+            </div>
+        </div>
+    );
+};
+
+export default Seminar3;
+```
+
+![PropsGreeting](./img/PropsGreeting.png)
+
+## Task 2
+
+1. Develop a Counter component that displays a number and two buttons: one to increase the value by 1 and one to decrease it by 1.
+2. Use the useState hook to manage the state of the counter.
+3. The buttons can be made using material ui
+
+Installing Material-UI:
+
+```Terminal
+npm install react react-dom
+npm install @mui/material @emotion/react @emotion/styled
+```
+
+Counter component:
+
+```JavaScript
+import { Button, Container, Typography } from '@mui/material';
+import React, { useState } from 'react';
+
+const MaterialCounter = () => {
+    const [count, setCount] = useState(0);
+
+    const increaseCount = () => {
+        setCount(prevCount => prevCount + 1);
+    };
+
+    const decreaseCount = () => {
+        setCount(prevCount => Math.max(prevCount - 1, 0));
+    };
+
+    return (
+        <Container style={{ textAlign: 'center', marginTop: '50px' }}>
+            <Typography variant="h4" gutterBottom>
+                Counter: {count}
+            </Typography>
+            <Button variant="contained" color="primary" onClick={increaseCount} style={{ marginRight: '10px' }}>
+                Increase
+            </Button>
+            <Button
+                variant="contained"
+                color="secondary"
+                onClick={decreaseCount}
+                disabled={count === 0}
+            >
+                Decrease
+            </Button>
+        </Container>
+    );
+};
+
+export default MaterialCounter;
+```
+
+Importing the Counter component:
+
+```JavaScript
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import React from 'react';
+import MaterialCounter from '../components/MaterialCounter';
+import PropsGreeting from '../components/PropsGreeting';
+
+const theme = createTheme();
+
+const Seminar3 = () => {
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <div style={{ textAlign: 'center' }}>
+                <h1>Props Greeting</h1>
+                <div>
+                    <PropsGreeting name="Alexey" />
+                    <PropsGreeting name="Maria" />
+                    <PropsGreeting name="Dmitry" />
+                </div>
+                <h1>Welcome to the Counter App!</h1>
+                <MaterialCounter />
+            </div>
+        </ThemeProvider>
+    );
+};
+
+export default Seminar3;
+```
+
+![MaterialCounter](./img/MaterialCounter.png)
+
+## Task 3
+
+1. Create a MessagesList component that displays a list of messages. Each message must have a unique id and text.
+2. Use the key prop when rendering the list to ensure optimal performance.
+
+```JavaScript
+import { List, ListItem, ListItemText, Typography } from '@mui/material';
+import { styled } from '@mui/system';
+import React from 'react';
+
+const StyledListItem = styled(ListItem)({
+    borderBottom: '1px solid #ccc',
+    padding: '10px 0',
+});
+
+const messages = [
+    { id: 1, text: 'Hi, how are you?' },
+    { id: 2, text: 'Im fine, thanks!' },
+    { id: 3, text: 'Whats new?' },
+    { id: 4, text: 'Working on a new project.' },
+];
+
+const MessagesList = () => {
+    return (
+        <div>
+            <Typography variant="h6" gutterBottom>
+                List of messages
+            </Typography>
+            <List>
+                {messages.map((message) => (
+                    <StyledListItem key={message.id}>
+                        <ListItemText primary={message.text} />
+                    </StyledListItem>
+                ))}
+            </List>
+        </div>
+    );
+};
+
+export default MessagesList;
+```
+
+## Task 4
+
+Create a TextDisplayForm React component that allows the user to enter text into an input field and display it on the screen in a styled form when a button is pressed.
+
+- Create an input field (TextField)
+  - Add a TextField for the user to enter text.
+  - Set the label of the input field to "Enter text".
+  - Make the input field full-width.
+- Place a button below the input field.
+  - Set the button text to "Show text".
+  - When the button is pressed, the entered text should be displayed below the button.
+
+```JavaScript
+import React, { useState } from 'react';
+import { TextField, Button, Typography, Box } from '@mui/material';
+
+const TextDisplayForm = () => {
+  const [inputText, setInputText] = useState('');
+  const [displayText, setDisplayText] = useState('');
+
+  const handleInputChange = (event) => {
+    setInputText(event.target.value);
+  };
+
+  const handleButtonClick = () => {
+    setDisplayText(inputText);
+  };
+
+  return (
+    <Box sx={{ maxWidth: 400, margin: 'auto', mt: 5 }}>
+      <TextField
+        label="Введите текст"
+        variant="outlined"
+        fullWidth
+        value={inputText}
+        onChange={handleInputChange}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleButtonClick}
+        sx={{ mt: 2 }}
+      >
+        Отобразить текст
+      </Button>
+      {displayText && (
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          {displayText}
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
+export default TextDisplayForm;
+```
+
+![TextDisplayForm](./img/TextDisplayForm.png)
+
+## Task 5
+
+- Create a ThemeSwitcher component. This component will contain a button that will change the interface theme (light/dark) when clicked.
+- Use useState to manage the current theme. Store the current theme state in the ThemeSwitcher component.
+  The state can be a simple string, such as "light" or "dark".
+- Pass the current theme as a prop to another component, which will change its style depending on the received theme. For example, create a Content component that changes its background color depending on the theme.
+- Add logic for switching the theme to the ThemeSwitcher.
+  When the button is clicked, it should switch between the "light" and "dark" states, and this change should be reflected in the Content component.
+
+```JavaScript
+import React from 'react';
+
+const Content = ({ theme }) => {
+    const contentStyle = {
+        backgroundColor: theme === 'light' ? '#ffffff' : '#333333',
+        color: theme === 'light' ? '#000000' : '#ffffff',
+        padding: '20px',
+        borderRadius: '5px',
+        transition: 'background-color 0.3s, color 0.3s',
+    };
+
+    return (
+        <div style={contentStyle}>
+            <h1>Current theme: {theme}</h1>
+            <p>This content changes its style depending on the theme.</p>
+        </div>
+    );
+};
+
+export default Content;
+```
+
+```JavaScript
+import React, { useState } from 'react';
+
+const ThemeSwitcher = ({ onThemeChange }) => {
+    const [theme, setTheme] = useState('light');
+
+    const toggleTheme = () => {
+        const newTheme = theme === 'light' ? 'dark' : 'light';
+        setTheme(newTheme);
+        onThemeChange(newTheme);
+    };
+
+    return (
+        <button onClick={toggleTheme}>
+            Switch theme to {theme === 'light' ? 'dark' : 'light'}
+        </button>
+    );
+};
+
+export default ThemeSwitcher;
+```
+
+```JavaScript
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import React, { useState } from 'react';
+import Content from '../components/Content';
+import MaterialCounter from '../components/MaterialCounter';
+import MessagesList from '../components/MessagesList';
+import PropsGreeting from '../components/PropsGreeting';
+import TextDisplayForm from '../components/TextDisplayForm';
+import ThemeSwitcher from '../components/ThemeSwitcher';
+
+const Seminar3 = () => {
+    const [themeMode, setThemeMode] = useState('light');
+
+    const handleThemeChange = (newTheme) => {
+        setThemeMode(newTheme);
+    };
+
+    const theme = createTheme({
+        palette: {
+            mode: themeMode,
+        },
+    });
+
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <div style={{ textAlign: 'center' }}>
+                <h1>Props Greeting</h1>
+                <PropsGreeting name="Alexey" />
+                <PropsGreeting name="Maria" />
+                <PropsGreeting name="Dmitry" />
+                <h1>Welcome to the Counter App!</h1>
+                <MaterialCounter />
+                <h1>MessagesList</h1>
+                <MessagesList />
+                <h1>Text Display</h1>
+                <TextDisplayForm />
+                <ThemeSwitcher onThemeChange={handleThemeChange} />
+                {/* Передаем только режим темы */}
+                <Content theme={theme.palette.mode} />
+            </div>
+        </ThemeProvider>
+    );
+};
+
+export default Seminar3;
+```
+
+![ThemeSwitcher](./img/ThemeSwitcher.png)
+
+## HomeWork
+
+### Task 1: Temperature Converter with Material UI
+
+Create a TemperatureConverter component using Material UI TextField and Button components to input and display temperatures in Celsius and Fahrenheit.
+
+Components:
+
+- Use a TextField to input a temperature value.
+- Add labels to each TextField indicating the units (Celsius and Fahrenheit).
+
+Logic:
+
+- When a value is entered in one field, automatically convert it and display it in the other.
+- Implement temperature conversion in both directions.
+
+```JavaScript
+import { Box, TextField } from '@mui/material';
+import React, { useState } from 'react';
+
+const TemperatureConverter = () => {
+    const [celsius, setCelsius] = useState('');
+    const [fahrenheit, setFahrenheit] = useState('');
+
+    const handleCelsiusChange = (event) => {
+        const value = event.target.value;
+        setCelsius(value);
+        if (!isNaN(value) && value !== '') {
+            const convertedValue = (value * 9 / 5) + 32;
+            setFahrenheit(convertedValue.toFixed(2));
+        } else {
+            setFahrenheit('');
+        }
+    };
+
+    const handleFahrenheitChange = (event) => {
+        const value = event.target.value;
+        setFahrenheit(value);
+        if (!isNaN(value) && value !== '') {
+            const convertedValue = (value - 32) * 5 / 9;
+            setCelsius(convertedValue.toFixed(2));
+        } else {
+            setCelsius('');
+        }
+    };
+
+    return (
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 5 }}>
+            <TextField
+                label="Цельсий (°C)"
+                variant="outlined"
+                value={celsius}
+                onChange={handleCelsiusChange}
+                sx={{ mb: 2 }}
+                type="number"
+            />
+            <TextField
+                label="Фаренгейт (°F)"
+                variant="outlined"
+                value={fahrenheit}
+                onChange={handleFahrenheitChange}
+                type="number"
+            />
+        </Box>
+    );
+};
+
+export default TemperatureConverter;
+```
+
+### Task 2: Todo List with Material UI
+
+Develop a TodoList component for managing tasks: adding, displaying, and deleting tasks.
+
+Components:
+
+- Use a TextField to enter a new task.
+- Add a Button to add a task to the list.
+- For each task in the list, use a Card or ListItem from Material UI. Inside each list item, place the task text and an IconButton with a delete icon (e.g. DeleteIcon).
+
+Logic:
+
+- When you click the add button, a new task should be added to the list.
+- Next to each task, there should be a button to delete it.
+
+```JavaScript
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Button, IconButton, List, ListItem, ListItemText, TextField, Typography } from '@mui/material';
+import React, { useState } from 'react';
+
+const TodoListMaterialUI = () => {
+    const [task, setTask] = useState('');
+    const [tasks, setTasks] = useState([]);
+
+    const handleInputChange = (event) => {
+        setTask(event.target.value);
+    };
+
+    const handleAddTask = () => {
+        if (task.trim() === '') return;
+        setTasks([...tasks, task]);
+        setTask('');
+    };
+
+    const handleDeleteTask = (index) => {
+        const newTasks = tasks.filter((_, i) => i !== index);
+        setTasks(newTasks);
+    };
+
+    return (
+        <Box sx={{ maxWidth: 400, margin: 'auto', mt: 5 }}>
+            <Typography variant="h4" gutterBottom>
+                Task List
+            </Typography>
+            <Box sx={{ display: 'flex', mb: 2 }}>
+                <TextField
+                    label="New Task"
+                    variant="outlined"
+                    value={task}
+                    onChange={handleInputChange}
+                    fullWidth
+                />
+                <Button variant="contained" onClick={handleAddTask} sx={{ ml: 1 }}>
+                    Добавить
+                </Button>
+            </Box>
+            <List>
+                {tasks.map((task, index) => (
+                    <ListItem key={index} secondaryAction={
+                        <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteTask(index)}>
+                            <DeleteIcon />
+                        </IconButton>
+                    }>
+                        <ListItemText primary={task} />
+                    </ListItem>
+                ))}
+            </List>
+        </Box>
+    );
+};
+
+export default TodoListMaterialUI;
+```
+
+![TodoListMaterialUI](./img/TodoListMaterialUI.png)
