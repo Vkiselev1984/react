@@ -10,9 +10,9 @@ const Content = ({ theme }) => {
     };
 
     return (
-        <div style={contentStyle}>
-            <h1>Current theme: {theme}</h1>
-        </div>
+
+        <h1 style={contentStyle}>Current theme: {theme}</h1>
+
     );
 };
 

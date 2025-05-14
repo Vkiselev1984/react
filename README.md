@@ -940,3 +940,98 @@ export default TodoListMaterialUI;
 ```
 
 ![TodoListMaterialUI](./img/TodoListMaterialUI.png)
+
+# Seminar 4
+
+## Task 1: Box Component
+
+1. Create a Box component that wraps the content passed in children in a div with some styles (e.g. border and padding).
+2. Use Box to wrap different elements (text, images, other components) to demonstrate its reusability.
+
+```JavaScript
+import React from 'react';
+
+const Box = ({ children }) => {
+    const boxStyle = {
+        border: '2px solid #ccc',
+        borderRadius: '8px',
+        padding: '16px',
+        margin: '16px 0',
+        backgroundColor: '#f9f9f9',
+    };
+
+    return <div style={boxStyle}>{children}</div>;
+};
+
+export default Box;
+```
+
+```JavaScript
+<Box>
+                <h2>Heading</h2>
+                <p>This is the text inside the Box component.</p>
+            </Box>
+
+            <Box>
+                <img src="https://via.placeholder.com/150" alt="Sample" style={{ width: '100%' }} />
+            </Box>
+
+            <Box>
+                <button onClick={() => alert('Button clicked!')}>Click me</button>
+            </Box>
+```
+
+![Box](./img/Box.png)
+
+## Task 2: List Component
+
+1. Create a List component that takes a function via props, and that function returns the list items (<li>). List should render those items inside a <ul>.
+2. Use List to display a list of items, where each item can have its own unique style or content, defined by the render props function.
+
+```JavaScript
+import React from 'react';
+
+const List = ({ renderItems }) => {
+    return (
+        <ul>
+            {renderItems()}
+        </ul>
+    );
+};
+
+export default List;
+```
+
+```JavaScript
+import React from 'react';
+import List from '../components/List';
+
+const App = () => {
+const items = [
+{ id: 1, content: 'First item', style: { color: 'red' } },
+{ id: 2, content: 'Second item', style: { color: 'blue' } },
+{ id: 3, content: 'Third point', style: { color: 'green' } },
+];
+
+const renderListItems = () => {
+return items.map(item => (
+<li key={item.id} style={item.style}>
+{item.content}
+</li>
+));
+};
+
+return (
+<div>
+<h1>List of items</h1>
+<List renderItems={renderListItems} />
+</div>
+);
+};
+
+export default App;
+```
+
+![List](./img/List.png)
+
+## Homework
