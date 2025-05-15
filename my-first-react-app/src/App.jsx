@@ -7,6 +7,7 @@ import Seminar2 from './pages/Seminar2';
 import Seminar3 from './pages/Seminar3';
 import Seminar4 from './pages/Seminar4';
 import Seminar5 from './pages/Seminar5';
+import Seminar6 from './pages/Seminar6';
 
 const App = () => {
   return (
@@ -31,6 +32,9 @@ const App = () => {
           <li className="nav-item">
             <Link className="nav-link" to="/Seminar5">Seminar5</Link>
           </li>
+          <li className="nav-item">
+            <Link className="nav-link" to="/Seminar6">Seminar6</Link>
+          </li>
         </ul>
       </nav>
       <Routes>
@@ -40,6 +44,7 @@ const App = () => {
         <Route path="/Seminar3" element={<Seminar3 />} />
         <Route path="/Seminar4" element={<Seminar4 />} />
         <Route path="/Seminar5" element={<Seminar5 />} />
+        <Route path="/Seminar6" element={<Seminar6 />} />
       </Routes>
     </Router>
   );

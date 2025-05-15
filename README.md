@@ -1303,3 +1303,587 @@ const MainWithLoading = withLoadingIndicator(Main);
 
 export default Seminar5;
 ```
+
+# Seminar 6
+
+## Task 1: Redux store
+
+Component for adding a task:
+
+- Implement a component with a text field for entering a description
+  of the task and an "Add" button that will dispatch an action to add the task to the store.
+
+Component for displaying a list of tasks:
+
+- Create a component that will display a list of all current tasks. For each task, display a description and a "Delete" button that will dispatch an action to remove this task from the store.
+
+```Terminal
+npm install react-redux redux
+```
+
+let's create a Redux store to manage task state:
+
+```JavaScript
+export const ADD_TASK = 'ADD_TASK';
+export const REMOVE_TASK = 'REMOVE_TASK';
+
+export const addTask = (description) => ({
+  type: ADD_TASK,
+  payload: description,
+});
+
+export const removeTask = (id) => ({
+  type: REMOVE_TASK,
+  payload: id,
+});
+```
+
+```JavaScript
+import { ADD_TASK, REMOVE_TASK } from './actions';
+
+const initialState = {
+  tasks: [],
+};
+
+const taskReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case ADD_TASK:
+      return {
+        ...state,
+        tasks: [...state.tasks, { id: Date.now(), description: action.payload }],
+      };
+    case REMOVE_TASK:
+      return {
+        ...state,
+        tasks: state.tasks.filter(task => task.id !== action.payload),
+      };
+    default:
+      return state;
+  }
+};
+
+export default taskReducer;
+```
+
+```JavaScript
+import { createStore } from 'redux';
+import taskReducer from './reducer';
+
+const store = createStore(taskReducer);
+
+export default store;
+```
+
+Now let's create components for adding and displaying tasks:
+
+```JavaScript
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { addTask } from '../redux/actions';
+
+
+const TaskInput = () => {
+const [description, setDescription] = useState('');
+const dispatch = useDispatch();
+
+const handleAddTask = () => {
+if (description.trim()) {
+dispatch(addTask(description));
+setDescription('');
+}
+};
+
+return (
+<div>
+<input
+type="text"
+value={description}
+onChange={(e) => setDescription(e.target.value)}
+placeholder="Enter task description"
+/>
+<button onClick={handleAddTask}>Add</button>
+</div>
+);
+};
+
+export default TaskInput;
+```
+
+```JavaScript
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeTask } from '../redux/actions';
+
+const TaskList = () => {
+const tasks = useSelector(state => state.tasks);
+const dispatch = useDispatch();
+
+return (
+<ul>
+{tasks.map(task => (
+<li key={task.id}>
+{task.description}
+<button onClick={() => dispatch(removeTask(task.id))}>Delete</button>
+</li>
+))}
+</ul>
+);
+};
+
+export default TaskList;
+```
+
+Now let's create the main component that will use TaskInput and TaskList:
+
+```JavaScript
+import React from 'react';
+import { Provider } from 'react-redux';
+import TaskInput from '../components/TaskInput';
+import TaskList from '../components/TaskList';
+import store from '../redux/store';
+
+const Seminar6 = () => {
+  return (
+    <Provider store={store}>
+      <div>
+        <h1>Task list</h1>
+        <TaskInput />
+        <TaskList />
+      </div>
+    </Provider>
+  );
+};
+
+export default Seminar6;
+```
+
+Using redux and react-redux in your app to manage todo state (or any other state) provides several advantages over a regular todo list, which may be stored in local component state. Let's take a look at the main differences and advantages:
+
+1. Centralized state management
+
+- Redux provides a centralized store for your app's state. This means that all data (like a todo list) is in one place, making it easier to manage and access from different components.
+- In a regular todo list, the state may be stored in the local state of a single component. This can lead to synchronization issues, especially if multiple components are trying to access or modify the same state.
+
+2. Simplifies data passing
+
+- With redux, you can avoid "passing" props through multiple layers of components. Instead, components can plug into the store and get the data they need directly.
+- In a regular todo list, in order to pass data from a parent component to a child component, you may need to pass it through multiple layers of components, making the code more complex and difficult to maintain.
+
+3. Easy to test and debug
+
+- Redux has a clear structure, which makes it more predictable and easier to test. You can easily test reducers and actions separately.
+- In a regular todo list, testing can be more difficult, since the state can be scattered across different components.
+
+4. Support for complex applications
+
+- Redux is more suitable for large and complex applications that require managing state that can change depending on different user actions.
+- A regular todo list can be sufficient for simple applications, but as the complexity of the application grows, state management can become labor-intensive.
+
+5. Middleware and extensibility
+
+- Redux supports middleware, which allows you to add additional functionality such as logging, handling asynchronous actions (for example, using redux-thunk or redux-saga).
+- In a regular todo list, you will have to implement such features yourself, which can lead to code duplication and complexity of logic.
+
+![ReduxTaskList](./img/ReduxTaskList.png)
+
+## Task 2: Redux
+
+Create an application that allows users to add products to a favorites list and manage this list (add new products and remove them).
+
+1. Redux Store Setup:
+   - Create favoritesSlice using createSlice. Define the initial state, which will contain an array of favorite products. Each product should have an id, name, description, and price.
+   - Define reducers for adding a product to favorites and removing a product from favorites.
+2. React Components:
+   - Create a component that displays a list of all products. For each product, provide an "Add to favorites" button that will add the product to the favorites list.
+   - Develop a component that displays a list of products added to favorites. For each product in this list, there should be a "Remove from favorites" button that allows you to remove the product from the list.
+
+```Terminal
+npm install @reduxjs/toolkit react-redux
+```
+
+[favoritesSlice](/my-first-react-app/src/redux/favoritesSlice.jsx)
+
+```JavaScript
+import { createSlice } from '@reduxjs/toolkit';
+
+const favoritesSlice = createSlice({
+  name: 'favorites',
+  initialState: {
+    items: [],
+  },
+  reducers: {
+    addFavorite: (state, action) => {
+      state.items.push(action.payload);
+    },
+    removeFavorite: (state, action) => {
+      state.items = state.items.filter(item => item.id !== action.payload.id);
+    },
+  },
+});
+
+export const { addFavorite, removeFavorite } = favoritesSlice.actions;
+export default favoritesSlice.reducer;
+```
+
+This code creates a slice of state to manage a list of favorites using the Redux Toolkit library. Let's break down what each piece of code does:
+
+```JavaScript
+const favoritesSlice = createSlice({
+  name: 'favorites',
+  initialState: {
+    items: [],
+  },
+  reducers: {
+    addFavorite: (state, action) => {
+      state.items.push(action.payload);
+    },
+    removeFavorite: (state, action) => {
+      state.items = state.items.filter(item => item.id !== action.payload.id);
+    },
+  },
+});
+```
+
+- name: The name of the slice, in this case 'favorites'.
+- initialState: The initial state of the slice. Here it contains the items array, which is initially empty.
+- reducers: An object containing reducer functions that describe how the state changes when certain actions occur.
+  - addFavorite: A function that adds an item to the items array. It takes an action containing the data to add (in action.payload).
+  - removeFavorite: A function that removes an item from the items array. It filters the items array, leaving only those items that do not match the id specified in action.payload.
+
+Export actions and reducer:
+
+```JavaScript
+export const { addFavorite, removeFavorite } = favoritesSlice.actions;
+export default favoritesSlice.reducer;
+```
+
+Here we export addFavorite and removeFavorite actions that can be used in components to change state. We also export a reducer that will be used to add to the Redux store.
+
+In your React component, you can use useDispatch from react-redux to dispatch addFavorite and removeFavorite actions to add or remove items from the favorites list.
+
+For example:
+
+```JavaScript
+import { useDispatch } from 'react-redux';
+import { addFavorite, removeFavorite } from './path/to/favoritesSlice';
+
+const MyComponent = () => {
+  const dispatch = useDispatch();
+
+  const handleAddFavorite = (item) => {
+    dispatch(addFavorite(item));
+  };
+
+  const handleRemoveFavorite = (item) => {
+    dispatch(removeFavorite(item));
+  };
+
+  // ...
+};
+```
+
+[reducer](/my-first-react-app/src/redux/reducer.jsx)
+
+Initial state:
+
+```JavaScript
+const initialState = {
+  tasks: [],
+};
+```
+
+We define an initial state for the reducer, which contains an array of tasks, initially empty. This state will be used when the reducer is called for the first time.
+
+```JavaScript
+const taskReducer = (state = initialState, action) => {
+  console.log('Action received in taskReducer:', action);
+  switch (action.type) {
+    case ADD_TASK:
+      return {
+        ...state,
+        tasks: [...state.tasks, { id: Date.now(), description: action.payload }],
+      };
+    case REMOVE_TASK:
+      return {
+        ...state,
+        tasks: state.tasks.filter(task => task.id !== action.payload),
+      };
+    default:
+      return state;
+  }
+};
+```
+
+- Reducer function: taskReducer is a function that takes the current state and an action as arguments. If no state is passed, it is initialized to initialState.
+- Logging: console.log prints information about the received action, which is useful for debugging.
+- Action handling:
+  - ADD_TASK: If the action type is ADD_TASK, the reducer returns a new state that:
+    - Preserves the previous state using the spread operator (...state).
+    - Adds a new task object to the tasks array with a unique id (using Date.now() to generate a timestamp) and a description that is passed in action.payload.
+  - REMOVE_TASK: If the action type is REMOVE_TASK, the reducer returns a new state that:
+    - Preserves the previous state.
+    - Removes the task with an id that matches action.payload from the tasks array using the filter method.
+  - default: If the action type does not match any of the specified ones, the reducer simply returns the current state.
+
+[actions](/my-first-react-app/src/redux/actions.jsx)
+
+To manage tasks in a Redux-based application, the following code is used:
+
+```JavaScript
+export const ADD_TASK = 'ADD_TASK';
+export const REMOVE_TASK = 'REMOVE_TASK';
+
+export const addTask = (description) => ({
+  type: ADD_TASK,
+  payload: description,
+});
+
+export const removeTask = (id) => ({
+  type: REMOVE_TASK,
+  payload: id,
+});
+```
+
+The addTask function is an "action creator". It takes a description parameter and returns an action object that contains:
+
+- type: the action type, which is ADD_TASK.
+- payload: the payload containing the task description passed to the function.
+
+When you call addTask('Task Description'), you'll get an object that might look like this:
+
+```JavaScript
+{
+  type: 'ADD_TASK',
+  payload: 'Task Description',
+}
+```
+
+The removeTask function is also an action creator. It takes an id parameter (the ID of the task to be removed) and returns an action object containing:
+
+- type: the type of the action, which is REMOVE_TASK.
+- payload: the payload containing the task ID passed to the function.
+
+When you call removeTask(123), you will get an object that might look like this:
+
+```JavaScript
+{
+  type: 'REMOVE_TASK',
+  payload: 123,
+}
+```
+
+These actions can be used in React components to dispatch actions to the Redux store.
+
+For example, in a component, you can import and use these functions like this:
+
+```JavaScript
+import { useDispatch } from 'react-redux';
+import { addTask, removeTask } from './path/to/actions';
+
+const MyComponent = () => {
+  const dispatch = useDispatch();
+
+  const handleAddTask = () => {
+    dispatch(addTask('New Task Description'));
+  };
+
+  const handleRemoveTask = (taskId) => {
+    dispatch(removeTask(taskId));
+  };
+
+  // ...
+};
+```
+
+[store](/my-first-react-app/src/redux/store.jsx)
+
+Redux store using the @reduxjs/toolkit library makes it easy to set up and use Redux.
+
+- configureStore is a function from @reduxjs/toolkit that simplifies creating a Redux store by automatically adding some useful settings, such as middleware for working with async actions and support for Redux DevTools.
+- favoritesReducer and taskReducer are reducers that manage the state of different parts of the application. We described them earlier.
+
+Creating a Redux store:
+
+```JavaScript
+const store = configureStore({
+  reducer: {
+    favorites: favoritesReducer,
+    tasks: taskReducer,
+  },
+});
+```
+
+Here we create a Redux store by passing a configuration object to configureStore. In this object:
+
+- reducer: This is an object where the keys are the names of the parts of the state, and the values ​​are the corresponding reducers that will handle changes to that state. In this case:
+  - tasks: The state managed by the taskReducer.
+  - favorites: The state managed by the favoritesReducer.
+
+This means that the application state will be split into two parts: tasks and favorites, each of which will be handled by its own reducer.
+
+Once the store is created, it can be used in the application by wrapping the root component in a Provider from react-redux to make the store available to all components in the application. For example:
+
+```JavaScript
+import { Provider } from 'react-redux';
+import store from './path/to/store';
+
+function App() {
+  return (
+    <Provider store={store}>
+      <div className="App">
+        <MyComponent />
+      </div>
+    </Provider>
+  );
+}
+```
+
+Which is what we did in the file [Seminar6](/my-first-react-app/src/pages/Seminar6.jsx):
+
+```JavaScript
+import React from 'react';
+import { Provider } from 'react-redux';
+import FavoritesList from '../components/FavoritesList';
+import ProductList from '../components/ProductList';
+import TaskInput from '../components/TaskInput';
+import TaskList from '../components/TaskList';
+import store from '../redux/store';
+
+const Seminar6 = () => {
+  return (
+    <Provider store={store}>
+      <div>
+        <h1>Task list</h1>
+        <TaskInput />
+        <TaskList />
+      </div>
+      <div>
+        <h1>Shop</h1>
+        <ProductList />
+        <FavoritesList />
+      </div>
+    </Provider>
+  );
+};
+
+export default Seminar6;
+```
+
+Let's look at the components we imported:
+
+[FavoritesList](/my-first-react-app/src/components/FavoritesList.jsx)
+
+This component displays a list of favorites and allows the user to remove items from the list.
+
+Importing the required modules:
+
+```JavaScript
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeFavorite } from '../redux/favoritesSlice';
+```
+
+- useDispatch and useSelector: hooks from the react-redux library that allow you to interact with the Redux store.
+  - useDispatch is used to dispatch actions to the Redux store.
+  - useSelector allows you to fetch data from the Redux store.
+- removeFavorite: this is an action creator imported from favoritesSlice, likely used to remove an item from the favorites list.
+
+Extracting data from a Redux store:
+
+```JavaScript
+const favorites = useSelector(state => state.favorites.items);
+const dispatch = useDispatch();
+```
+
+- favorites: using useSelector we get an array of favorites from the Redux state. It is assumed that the favorites state has an items property that contains the list of favorites.
+- dispatch: initializes the dispatch function that will be used to dispatch actions to the Redux store.
+
+Item Deletion Handler:
+
+```JavaScript
+const handleRemoveFromFavorites = (item) => {
+    dispatch(removeFavorite(item));
+};
+```
+
+This function takes the item to remove and calls dispatch, dispatching a removeFavorite action with the item as a parameter. This action should be handled by the reducer in favoritesSlice to update the state and remove the item from the favorites list.
+
+Returned JSX:
+
+```JavaScript
+return (
+    <div>
+        <h2>Favorites</h2>
+        {favorites.length === 0 ? (
+            <p>No favorites</p>
+        ) : (
+            <ul>
+                {favorites.map(item => (
+                    <li key={item.id}>
+                        <h3>{item.name}</h3>
+                        <p>{item.description}</p>
+                        <p>Price: {item.price} rub.</p>
+                        <button onClick={() => handleRemoveFromFavorites(item)}>Remove from favorites</button>
+                    </li>
+                ))}
+            </ul>
+        )}
+    </div>
+);
+```
+
+- The component returns JSX that displays the title "Favorites".
+- If the favorites list is empty (the length of the favorites array is 0), the message "No favorites" is displayed.
+- If the list contains items, they are displayed as a list (<ul>), where each item (<li>) contains:
+  - The name of the item (item.name).
+  - The description of the item (item.description).
+  - The price of the item (item.price).
+  - A button that, when clicked, calls handleRemoveFromFavorites to remove this item from the favorites.
+
+[ProductList](/my-first-react-app/src/components/ProductList.jsx)
+
+This component displays a list of products and allows the user to add items to the favorites list.
+
+Add to Favorites Handler:
+
+```JavaScript
+const handleAddToFavorites = (product) => {
+    dispatch(addFavorite(product));
+};
+```
+
+This function takes the product to be favorited and calls dispatch, dispatching an addFavorite action with the product as a parameter. This action should be handled by the reducer in favoritesSlice to update the state and add the product to the favorites list.
+
+Otherwise it is identical to the previous example.
+
+## Homework
+
+Develop a product catalog management app that allows adding, deleting, displaying, and editing products.
+
+Redux Store Setup:
+
+Use configureStore from @reduxjs/toolkit to create the store.
+Define the initial state and create a slice using createSlice for the products. Each product should have an id, name, description, price, and available.
+
+In the slice, define reducers and actions to add a new product, delete a product by ID, update a product, and change its availability.
+
+React Components:
+
+- Add Product Component:
+  Create a form that allows users to enter details of a new product (name, description, price, availability) and add it to the catalog.
+
+- Show Product Component:
+  Develop a component that displays a list of all products with their attributes, as well as buttons to remove a product from the catalog and toggle its availability.
+
+- Edit Product Component:
+  Optionally, provide the ability to edit existing products so that their name, description, price, and availability can be changed.
+
+### Solution
+
+- Let's create a file [productSlice.jsx](/my-first-react-app/src/redux/productSlice.jsx), in which we will define a slice for managing products. Let's define the main functions for working with products through Store which we will fine-tune.
+- Now let's create components for adding, displaying and editing products.
+- Component for adding a product [AddProduct.jsx](/my-first-react-app/src/components/AddProduct.jsx)
+- Component for displaying products [DisplayProductList.jsx](/my-first-react-app/src/components/DisplayProductList.jsx).
+- Component for editing product [EditProduct.jsx](/my-first-react-app/src/components/EditProduct.jsx)
+
+[productSlice](/my-first-react-app/src/redux/productSlice.jsx)
