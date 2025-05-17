@@ -1887,3 +1887,302 @@ React Components:
 - Component for editing product [EditProduct.jsx](/my-first-react-app/src/components/EditProduct.jsx)
 
 [productSlice](/my-first-react-app/src/redux/productSlice.jsx)
+
+# Seminar 7
+
+## Task 1
+
+To complete this task, you will need to create a logging middleware for Redux that will print information about actions and state to the console before and after each action. This will help in debugging and understanding the data flow in your application.
+
+- First, install the required dependencies for your project using npm install @reduxjs/toolkit react-redux. Then,
+  create a middleware that takes three arguments: store, next, and action. Your middleware should console log the current action and state before it executes, call next(action) to pass the action to the next middleware or reducer, and then console log the state after the action executes.
+- Once you have created your middleware, attach it to your Redux store. To do this, use the configureStore function from @reduxjs/toolkit. As a result, every action dispatched via store.dispatch will be logged by your middleware
+
+```JavaScript
+const loggerMiddleware = store => next => action => {
+    console.log('Action:', action);
+    console.log('State before action:', store.getState());
+    const result = next(action);
+    console.log('State after action:', store.getState());
+
+    return result;
+    };
+
+    export default loggerMiddleware;
+```
+
+This is a middleware for Redux that allows you to track actions and state in a store.
+
+The loggerMiddleware function takes a store and then returns a function that takes next (the next middleware or reducer) and returns a function that takes an action.
+
+- When an action is dispatched, the middleware:
+- Logs the current action.
+- Logs the state of the store before the action is executed.
+- Passes the action to the next middleware or reducer with next(action).
+- Logs the state of the store after the action is executed.
+
+Returns the result of executing the next middleware or reducer.
+
+```JavaScript
+import { configureStore } from '@reduxjs/toolkit';
+import loggerMiddleware from '../middleware/loggerMiddleware';
+import favoritesReducer from './favoritesSlice';
+import productReducer from './productSlice';
+import taskReducer from './reducer';
+
+const store = configureStore({
+  reducer: {
+    tasks: taskReducer,
+    favorites: favoritesReducer,
+    products: productReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(loggerMiddleware),
+});
+
+export default store;
+```
+
+The middleware adds the loggerMiddleware that was defined in the previous file, along with a set of standard middleware provided by the Redux Toolkit.
+
+```JavaScript
+import React from 'react';
+import { useDispatch } from 'react-redux';
+
+const Seminar7 = () => {
+    const dispatch = useDispatch();
+
+    const handleClick = () => {
+        dispatch({ type: 'SOME_ACTION_TYPE' });
+    };
+
+    return (
+        <div>
+            <h1>Seminar 7</h1>
+            <button onClick={handleClick}>Dispatch Action</button>
+        </div>
+    );
+};
+
+export default Seminar7;
+```
+
+The useDispatch function from react-redux allows you to access the dispatch function, which is used to dispatch actions to the Redux store.
+
+The handleClick function calls dispatch with an action object containing the SOME_ACTION_TYPE type. This action will be passed to the store and handled by the appropriate reducer.
+
+```JavaScript
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import App from './App';
+import store from './redux/store';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
+```
+
+The Provider component from react-redux is used to pass the Redux store to your React application. This allows all components inside the Provider to have access to the Redux store.
+
+store is imported from the store.jsx file where it was created.
+
+The component is rendered inside the Provider, allowing it and all its child components to use Redux.
+
+![loggerMiddleware](./img/loggerMiddleware.png)
+
+## Task 2
+
+In this example, we will create a basic application using Redux Saga
+to perform an asynchronous data request.
+● npm install redux-saga
+● Create a saga file. For example, src/sagas/usersSaga.js
+
+```JavaScript
+function fetchUsersApi() {
+return fetch('https://jsonplaceholder.typicode.com/users')
+.then(response => response.json());
+}
+```
+
+- Saga worker: should execute when the saga intercepts the `FETCH_USERS_REQUEST`
+- Set up Redux Saga middleware. In the file where you create your store
+- Now that the saga is attached to your application, you can initiate the loading of users by sending the FETCH_USERS_REQUEST action
+
+Let's install the necessary dependencies:
+
+```Terminal
+npm install redux redux-saga react-redux
+```
+
+```JavaScript
+import { call, put, takeEvery } from 'redux-saga/effects';
+
+function fetchUsersApi() {
+    return fetch('https://jsonplaceholder.typicode.com/users')
+        .then(response => response.json());
+}
+
+function* fetchUsers() {
+    try {
+        const users = yield call(fetchUsersApi);
+        yield put({ type: 'FETCH_USERS_SUCCESS', payload: users });
+    } catch (error) {
+        yield put({ type: 'FETCH_USERS_FAILURE', payload: error.message });
+    }
+}
+
+function* usersSaga() {
+    yield takeEvery('FETCH_USERS_REQUEST', fetchUsers);
+}
+
+export default usersSaga;
+```
+
+This code is a Redux Saga that fetches user data from an API and dispatches a FETCH_USERS_SUCCESS action with the fetched data as the payload. If an error occurs during the fetch, it dispatches a FETCH_USERS_FAILURE action with the error message as the payload.
+
+Now we need to set up Redux Saga middleware in the Redux store:
+
+```JavaScript
+const sagaMiddleware = createSagaMiddleware();
+
+const store = createStore(
+    rootReducer,
+    applyMiddleware(sagaMiddleware)
+);
+
+sagaMiddleware.run(usersSaga);
+```
+
+To manage the user state, we will create a reducer:
+
+```JavaScript
+const initialState = {
+    users: [],
+    loading: false,
+    error: null,
+};
+
+const usersReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case 'FETCH_USERS_REQUEST':
+            return { ...state, loading: true, error: null };
+        case 'FETCH_USERS_SUCCESS':
+            return { ...state, loading: false, users: action.payload };
+        case 'FETCH_USERS_FAILURE':
+            return { ...state, loading: false, error: action.payload };
+        default:
+            return state;
+    }
+};
+
+export default usersReducer;
+```
+
+To use several reducers, let's create a common one and import combineReducers from redux:
+
+```JavaScript
+import { combineReducers } from 'redux';
+import favoritesReducer from './favoritesReducer';
+import productsReducer from './productsReducer';
+import tasksReducer from './tasksReducer';
+import usersReducer from './usersReducer';
+
+const rootReducer = combineReducers({
+    tasks: tasksReducer,
+    favorites: favoritesReducer,
+    products: productsReducer,
+    users: usersReducer,
+});
+
+export default rootReducer;
+```
+
+Now let's create a component that will display the user list:
+
+```JavaScript
+import React from 'react';
+import { useSelector } from 'react-redux';
+
+const UserList = () => {
+    const { users = [], loading = false, error = null } = useSelector(state => state.users) || {};
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    if (error) {
+        return <p>Error: {error}</p>;
+    }
+
+    return (
+        <ul>
+            {users.map(user => (
+                <li key={user.id}>{user.name}</li>
+            ))}
+        </ul>
+    );
+};
+
+export default UserList;
+```
+
+Let's update ours Store:
+
+```JavaScript
+import { configureStore } from '@reduxjs/toolkit';
+import createSagaMiddleware from 'redux-saga';
+import loggerMiddleware from '../middleware/loggerMiddleware';
+import rootSaga from '../sagas/usersSaga';
+import favoritesReducer from './favoritesSlice';
+import productReducer from './productSlice';
+import taskReducer from './reducer';
+
+const sagaMiddleware = createSagaMiddleware();
+
+const store = configureStore({
+  reducer: {
+    tasks: taskReducer,
+    favorites: favoritesReducer,
+    products: productReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(loggerMiddleware, sagaMiddleware),
+});
+
+sagaMiddleware.run(rootSaga);
+
+export default store;
+```
+
+and add functionality to Seminar7:
+
+```JavaScript
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import UserList from '../components/UserList';
+import { fetchUsersRequest } from '../redux/actions';
+
+const Seminar7 = () => {
+    const dispatch = useDispatch();
+
+    const handleClick = () => {
+        dispatch(fetchUsersRequest());
+    };
+
+    return (
+        <div>
+            <h1>Seminar 7</h1>
+            <button onClick={handleClick}>Load Users</button>
+            <UserList />
+        </div>
+    );
+};
+
+export default Seminar7;
+```
+
+![Users saga](./img/Users_saga.png)

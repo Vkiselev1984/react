@@ -8,6 +8,7 @@ import Seminar3 from './pages/Seminar3';
 import Seminar4 from './pages/Seminar4';
 import Seminar5 from './pages/Seminar5';
 import Seminar6 from './pages/Seminar6';
+import Seminar7 from './pages/Seminar7';
 
 const App = () => {
   return (
@@ -35,6 +36,9 @@ const App = () => {
           <li className="nav-item">
             <Link className="nav-link" to="/Seminar6">Seminar6</Link>
           </li>
+          <li className="nav-item">
+            <Link className="nav-link" to="/Seminar7">Seminar7</Link>
+          </li>
         </ul>
       </nav>
       <Routes>
@@ -45,6 +49,7 @@ const App = () => {
         <Route path="/Seminar4" element={<Seminar4 />} />
         <Route path="/Seminar5" element={<Seminar5 />} />
         <Route path="/Seminar6" element={<Seminar6 />} />
+        <Route path="/Seminar7" element={<Seminar7 />} />
       </Routes>
     </Router>
   );

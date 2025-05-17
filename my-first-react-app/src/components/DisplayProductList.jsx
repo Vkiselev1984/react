@@ -28,7 +28,7 @@ const EditProduct = ({ product, onSave, onCancel }) => {
       </div>
       <div>
         <label>
-          Описание:
+          Description:
           <input
             type="text"
             value={description}
@@ -39,7 +39,7 @@ const EditProduct = ({ product, onSave, onCancel }) => {
       </div>
       <div>
         <label>
-          Цена:
+          Price:
           <input
             type="number"
             value={price}
@@ -50,7 +50,7 @@ const EditProduct = ({ product, onSave, onCancel }) => {
       </div>
       <div>
         <label>
-          Доступен:
+          Available
           <input
             type="checkbox"
             checked={available}
@@ -58,8 +58,8 @@ const EditProduct = ({ product, onSave, onCancel }) => {
           />
         </label>
       </div>
-      <button type="submit">Сохранить</button>
-      <button type="button" onClick={onCancel}>Отменить</button>
+      <button type="submit">Save</button>
+      <button type="button" onClick={onCancel}>Cancel</button>
     </form>
   );
 };
