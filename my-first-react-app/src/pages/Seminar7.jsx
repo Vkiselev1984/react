@@ -1,22 +1,22 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import UserList from '../components/UserList';
-import { fetchUsersRequest } from '../redux/actions';
+import TaskListAsync from '../components/TaskListAsync';
+import { fetchTasks } from '../redux/taskSlice';
 
 const Seminar7 = () => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const handleClick = () => {
-        dispatch(fetchUsersRequest());
-    };
+  const handleLoadTasks = () => {
+    dispatch(fetchTasks());
+  };
 
-    return (
-        <div>
-            <h1>Seminar 7</h1>
-            <button onClick={handleClick}>Load Users</button>
-            <UserList />
-        </div>
-    );
+  return (
+    <div>
+      <h1>Seminar 7: Async Tasks with Redux Toolkit</h1>
+      <button onClick={handleLoadTasks}>Load</button>
+      <TaskListAsync />
+    </div>
+  );
 };
 
 export default Seminar7;

@@ -2186,3 +2186,71 @@ export default Seminar7;
 ```
 
 ![Users saga](./img/Users_saga.png)
+
+## Homework
+
+## Task
+
+1. **Initialize the project and install dependencies**
+
+- The project was created using Create React App.
+- Dependencies installed: `@reduxjs/toolkit`, `react-redux` (see package.json).
+
+2. **Create local data**
+
+- The `src/data/tasks.js` file defines an array of tasks:
+
+```js
+export const tasks = [
+  { id: 1, title: "Do homework", completed: false },
+  { id: 2, title: "Read Redux Toolkit", completed: true },
+  { id: 3, title: "Watch a seminar", completed: false },
+];
+```
+
+3. **Setting up the Redux store**
+
+- Created a task slice `src/redux/taskSlice.js` using `createSlice` and `createAsyncThunk`.
+- Connected to the store (`src/redux/store.jsx`).
+
+4. **Async action with Thunk**
+
+- Used `createAsyncThunk` to simulate asynchronous loading of tasks from a local file using `setTimeout`.
+
+5. **Working with the component**
+
+- On the `Seminar7` page, a button for loading tasks and displaying their list via the `TaskListAsync` component is implemented.
+- Used the `useDispatch` and `useSelector` hooks.
+
+## Usage example (Seminar7)
+
+- Open the "Seminar7" page in the application.
+- Click the "Load tasks" button.
+- A list of tasks from the local file will appear in a second.
+
+## Main files
+
+- [local tasks](./my-first-react-app/src/data/tasks.js)
+- [slice and thunk for tasks](./my-first-react-app/src/redux/taskSlice.js)
+- [slice connection](./my-first-react-app/src/redux/store.jsx)
+- [page with task loading](./my-first-react-app/src/Seminar7.jsx)
+- [component for task output](./my-first-react-app/src/components/TaskListAsync.jsx)
+
+---
+
+### Example code for asynchronous thunk
+
+```JavaScript
+export const fetchTasks = createAsyncThunk(
+  "tasks/fetchTasks",
+  async (_, thunkAPI) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(localTasks);
+      }, 1000);
+    });
+  }
+);
+```
+
+---
